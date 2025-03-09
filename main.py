@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+### Main Shop Interface ###
 class Shop(ABC):
     pass
 
@@ -16,11 +17,12 @@ class Products(Shop):
     def __repr__(self):
         return f"{self.product_number} - {self.product_name}: {self.product_price} - {self.product_quantity}"
 
-
 ### Warehouse Interface ###
 class Warehouse(Shop):
     @abstractmethod
     def add_to_warehouse(Product):
+        """Adds a product to the warehouse.
+        """
         pass
 
     @abstractmethod
@@ -43,23 +45,8 @@ class Warehouse(Shop):
 
 ### Shopping Cart Interface ###
 class ShoppingCart(Shop):
-    @abstractmethod
-    def create_cart()->list:
-        """Creates a new shopping cart.
-        """
-        pass
+    pass
 
-    @abstractmethod
-    def add_to_cart():
-        """Adds items to the shopping cart.
-        """
-        pass
-
-    @abstractmethod
-    def rem_from_cart():
-        """Removes items from shopping cart.
-        """
-        pass
 ### Payment Interface ###
 class Payment(Shop):
     @abstractmethod
@@ -68,7 +55,7 @@ class Payment(Shop):
         """
         pass
 
-### Simple Storage ###
+## Simple Storage ##
 class SimpleStorage(Warehouse):
     def __init__(self, location: str, size: float):
         self.location = location
@@ -99,14 +86,15 @@ class SimpleStorage(Warehouse):
     def check_availabilty(self, Product):
         """Returns True if this product is available.
         """
-        if Product.product_number in self.inventory:
+        if Product.product_number in self.inventory.keys():
             print(f"{Product.product_number} - {Product.product_name} is available. {Product.product_quantity} in stock.")
             return True
         else:
             print("Product is not available")
             return False
 
-class Article(Products):
+## Article ##
+class Article(Products):    
     def __init__(self, product_number, product_name, product_price, product_quantity, edible: bool):
         super().__init__(product_number, product_name, product_price, product_quantity)
         self.edible = edible
@@ -117,21 +105,73 @@ class Article(Products):
         else:
             return False
 
+## My Cart ##
+class MyCart(ShoppingCart):
+    """Creates MyCart shopping cart. Initial cart number is 0. Initial key is 1. Initial quantity is 1.
+    """
+    def __init__(self):
+        self.cart = {}
+        self.cart_number = 1
+        self.key = 1
+        self.quantity = 1
 
+    def create_cart(self):
+        self.cart = {}
+        self.cart_number += 1
+        return self.cart
 
+    def add_to_cart(self, Products, order_quantity: int):
+        if self.check_availabilty(Products, order_quantity) == True:
+            self.quantity = order_quantity
+            self.cart.update({self.key: [Products.product_number, Products.product_name, Products.product_price, self.quantity]})
+            self.key += 1
+            return self.cart
+        else:
+            print("More products are on their way. Please try again later.")
 
+    def rem_from_cart(self, order_key: int):
+        if order_key in self.cart.keys():
+            self.cart.pop(order_key)
+            return self.cart
+        else:
+            print("This article is not in your cart.")
+        
+
+    def check_availabilty(self, Product, quantity: int):
+        if Product.product_quantity >= quantity:
+            return True
+        else:
+            print(f"{quantity} of {Product.product_name} is not available. Only {Product.product_quantity} in stock.")
+            return False
+
+## Checkout ##
+class Checkout(ShoppingCart):
+    def checkout(ShoppingCart):
+        pass
+
+## Finish Order ##
+class FinishOrder(ShoppingCart):
+    def finish_order(ShoppingCart):
+        if Payment.confirm_payment() == True:
+            pass
+        else:
+            print("")
 
 if __name__ == "__main__":
+
+    # Shop #
     shop = Shop()
+
+    # Article #
     shoe = Article(product_number="0001", product_name="Gummies", product_price=0.99, product_quantity=1000, edible=True)
     shirt = Article(product_number="0002", product_name="T-Shirt", product_price=19.99, product_quantity=100, edible=False)
 
-
+    # Simple Storage #
     store = SimpleStorage("Strasse 123", 1000)
 
     store.add_to_warehouse(shoe)
     store.add_to_warehouse(shirt)
-    print(store.inventory)
+    # print(store.inventory)
 
     # store.rem_from_warehouse(shoe)
     store.get_warehouse()
@@ -139,4 +179,12 @@ if __name__ == "__main__":
     store.check_availabilty(shoe)
     store.check_availabilty(shirt)
 
+    # Shopping Cart #
+    cart = MyCart()
+    cart.create_cart()
+    cart.add_to_cart(shoe, 1000)
+    cart.add_to_cart(shirt, 20)
+    print(cart.cart)
 
+    # cart.rem_from_cart(1)
+    # print(cart.cart)
