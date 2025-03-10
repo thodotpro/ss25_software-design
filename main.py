@@ -6,8 +6,7 @@ class Shop(ABC):
 
 ### Product Interface ###
 class Products(Shop):
-    """To initialize any product you're required to confirm: A product number, a product name, a price and the quantity.
-    """
+    """To initialize any product you're required to confirm: A product number, a product name, a price and the quantity."""
     def __init__(self, product_number: str, product_name: str, product_price: float, product_quantity: int):
         self.product_number = product_number
         self.product_name = product_name
@@ -20,27 +19,23 @@ class Products(Shop):
 ### Warehouse Interface ###
 class Warehouse(Shop):
     @abstractmethod
-    def add_to_warehouse(Product):
-        """Adds a product to the warehouse.
-        """
+    def add_to_warehouse(self, Product):
+        """Adds a product to the warehouse."""
         pass
 
     @abstractmethod
-    def rem_from_warehouse(Product):
-        """Removes a product from the warehouse.
-        """
+    def rem_from_warehouse(self, Product):
+        """Removes a product from the warehouse."""
         pass
 
     @abstractmethod
-    def get_warehouse(Warehouse):
-        """"Returns a dictionairy of all products in the warehouse.
-        """
+    def get_warehouse(self):
+        """Returns a dictionary of all products in the warehouse."""
         pass
 
     @abstractmethod
-    def check_availabilty(Warehouse, Product)->bool:
-        """Returns True if this product is available.
-        """
+    def check_availabilty(self, Product) -> bool:
+        """Returns True if this product is available."""
         pass
 
 ### Shopping Cart Interface ###
@@ -50,9 +45,8 @@ class ShoppingCart(Shop):
 ### Payment Interface ###
 class Payment(Shop):
     @abstractmethod
-    def confirm_payment()->bool:
-        """Returns True if the payment of an order is complete.
-        """
+    def confirm_payment(self, order=None) -> bool:
+        """Returns True if the payment of an order is complete."""
         pass
 
 ## Simple Storage ##
@@ -66,26 +60,21 @@ class SimpleStorage(Warehouse):
         return f"Location: {self.location}, Size: {self.size}"
 
     def add_to_warehouse(self, Product):
-        """Adds a product to the warehouse.
-        """
+        """Adds a product to the warehouse."""
         self.inventory.update({Product.product_number: [Product.product_name, Product.product_price, Product.product_quantity]})
         return self.inventory
 
     def rem_from_warehouse(self, Product):
-        """Removes a product from the warehouse.
-        """
+        """Removes a product from the warehouse."""
         self.inventory.pop(Product.product_number)
 
     def get_warehouse(self):
-        """Returns all available items in the warehouse.
-        """
+        """Returns all available items in the warehouse."""
         for k in self.inventory:
             print(f"{k}: {self.inventory[k]}")
 
-
     def check_availabilty(self, Product):
-        """Returns True if this product is available.
-        """
+        """Returns True if this product is available."""
         if Product.product_number in self.inventory.keys():
             print(f"{Product.product_number} - {Product.product_name} is available. {Product.product_quantity} in stock.")
             return True
@@ -99,16 +88,15 @@ class Article(Products):
         super().__init__(product_number, product_name, product_price, product_quantity)
         self.edible = edible
 
-    def need_cooling(self)->bool:
-        if self.edible == True:
+    def need_cooling(self) -> bool:
+        if self.edible:
             return True
         else:
             return False
 
 ## My Cart ##
 class MyCart(ShoppingCart):
-    """Creates MyCart shopping cart. Initial cart number is 0. Initial key is 1. Initial quantity is 1.
-    """
+    """Creates MyCart shopping cart. Initial cart number is 0. Initial key is 1. Initial quantity is 1."""
     def __init__(self):
         self.cart = {}
         self.cart_number = 1
@@ -136,7 +124,6 @@ class MyCart(ShoppingCart):
         else:
             print("This article is not in your cart.")
         
-
     def check_availabilty(self, Product, quantity: int):
         if Product.product_quantity >= quantity:
             return True
@@ -144,15 +131,52 @@ class MyCart(ShoppingCart):
             print(f"{quantity} of {Product.product_name} is not available. Only {Product.product_quantity} in stock.")
             return False
 
+    def calculate_total(self):
+        total = 0
+        for item in self.cart.values():
+            total += item[2] * item[3]  # Price * Quantity
+        return total
+
+## Payment Interface Implementation ##
+class PaymentA(Payment):
+    def __init__(self, discount: float = 0.0):
+        """Initializes PaymentA with an optional discount."""
+        self.discount = discount
+
+    def apply_discount(self, order_total: float) -> float:
+        """Applies the discount to the order total and returns the discounted price."""
+        if self.discount > 0:
+            discount_amount = (self.discount / 100) * order_total
+            order_total -= discount_amount
+            print(f"Discount applied: {self.discount}% off. New total: {order_total}")
+        else:
+            print("No discount applied.")
+        return order_total
+
+    def confirm_payment(self, order=None) -> bool:
+        """Confirms the payment after applying the discount."""
+        if order is None:
+            print("No order provided. Payment cannot be processed.")
+            return False
+        
+        discounted_total = self.apply_discount(order['total'])
+        if discounted_total > 0:
+            print(f"Payment confirmed. Total amount: {discounted_total}")
+            return True
+        else:
+            print("Payment failed. Invalid order total.")
+            return False
+
 ## Checkout ##
 class Checkout(ShoppingCart):
-    def checkout(self, warehouse: Warehouse, payment: Payment):
-        """Geht den Warenkorb durch, prüft die Verfügbarkeit und führt die Zahlung aus."""
-        if not self.cart:
+    def checkout(self, cart: MyCart, warehouse: Warehouse, payment: Payment):
+        # Error occurred here: The Checkout class was trying to access self.cart,
+
+        if not cart.cart:  # Now `cart` is passed as an argument from `MyCart`
             print("Dein Warenkorb ist leer!")
             return False
         
-        for key, item in self.cart.items():
+        for key, item in cart.cart.items():
             product_number = item[0]  # Artikelnummer
             product_name = item[1]  # Produktname
             quantity = item[3]  # Bestellte Menge
@@ -169,18 +193,18 @@ class Checkout(ShoppingCart):
                 print(f"{product_name} ist nicht im Lager vorhanden.")
                 return False
 
-        # Zahlung bestätigen
-        if payment.confirm_payment():
+        # Order total calculation
+        order = {'total': cart.calculate_total()}  # Calculate the total price of the cart
+        if payment.confirm_payment(order):
             print("Bezahlung erfolgreich. Bestellung abgeschlossen!")
             return True
         else:
             print("Bezahlung fehlgeschlagen!")
             return False
 
-
 ## Finish Order ##
 class FinishOrder(ShoppingCart):
-    def finish_order(ShoppingCart):
+    def finish_order(self, ShoppingCart):
         if Payment.confirm_payment() == True:
             pass
         else:
@@ -200,9 +224,6 @@ if __name__ == "__main__":
 
     store.add_to_warehouse(shoe)
     store.add_to_warehouse(shirt)
-    # print(store.inventory)
-
-    # store.rem_from_warehouse(shoe)
     store.get_warehouse()
 
     store.check_availabilty(shoe)
@@ -215,5 +236,9 @@ if __name__ == "__main__":
     cart.add_to_cart(shirt, 20)
     print(cart.cart)
 
-    # cart.rem_from_cart(1)
-    # print(cart.cart)
+    # Payment #
+    payment = PaymentA(discount=10)  # 10% discount
+
+    # Checkout #
+    checkout = Checkout()
+    checkout.checkout(cart, store, payment)  # Pass cart, store, and payment
