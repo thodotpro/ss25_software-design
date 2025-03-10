@@ -177,6 +177,7 @@ class Checkout(ShoppingCart):
             print("Bezahlung fehlgeschlagen!")
             return False
 
+
 ## Finish Order ##
 class FinishOrder(ShoppingCart):
     def finish_order(ShoppingCart):
