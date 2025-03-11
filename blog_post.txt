@@ -1,0 +1,17 @@
+Warum bekommen Software-Design-Patterns und Prinzipien wenig Beachtung in Youtube Tutorials?
+
+
+
+
+Viele YouTube-Tutorials richten sich an Einsteiger. Das Ziel ist, sie schnell zu einem Ergebnis zu bringen, nicht sauberen, wartbaren Code zu lehren.
+Begriffe wie OCP (Open-Closed-Principle) oder DIP (Dependency Inversion Principle) klingen für Anfänger abstrakt und abschreckend.
+"Quick and Dirty" statt Clean Code.
+
+Viele Tutorials zeigen, wie man ein Problem löst, aber nicht, wie man es richtig löst.
+Oft wird einfach Code „hingeworfen“, der zwar funktioniert, aber nicht skalierbar oder gut strukturiert ist.
+Python als „flexible“ Sprache
+
+Konzepte wie Factory Pattern, Strategy Pattern oder Dependency Injection sind nicht so leicht verständlich wie eine einfache for-Schleife.
+Viele Entwickler lernen Patterns erst, wenn sie in komplexeren Software-Projekten arbeiten.
+
+Beispiele:
