@@ -4,7 +4,7 @@ Die meisten Youtube-Tutorials im Bereich Python, richten sich an blutige Anfäng
 Eventuell wird auch noch über Klassen gesprochen. Dennoch findet man auf Youtube auch Tuturials die weitaus tiefer in die Materie reichen. 
 
 Zum Beispiel der der *Harvard CS50's Introduction to Programming with Python - Full University Course* auf dem Kanal *freeCodeCamp.org*. In diesem Kurs, mit ein Dauer von knapp 16 Stunden,
-wo in Stunde 13 bei dem Thema Klassenvererbung mit einem if-statement initialisiert wird.
+wird in Stunde 13 bei dem Thema Klassenvererbung mit einem if-statement initialisiert wird.
 
 Ein weiteres Beispiel ist das Video *Python Full Course for free (2024)* auf dem Kanal *Bro Code*. Hier wird in der fünften Stunden eine Slot Machine
 programmiert. Dabei wird die Funktionen mit unnötig viel if-else Logik gefüttert und man sich durchaus für jeden if-Fall eine Funktionen hätte programmieren können.
