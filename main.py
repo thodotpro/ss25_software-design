@@ -201,6 +201,15 @@ class Checkout(ShoppingCart):
         else:
             print("Bezahlung fehlgeschlagen!")
             return False
+        
+class CalculateCart(ShoppingCart):
+    def calc_cart(self, cart: MyCart) -> float:
+        total = 0.0
+        for item in cart.cart.values():
+            product_price = item[2]
+            quantity = item[3]
+            total += product_price * quantity
+        return total
 
 ## Finish Order ##
 class FinishOrder(ShoppingCart):
@@ -232,7 +241,7 @@ if __name__ == "__main__":
     # Shopping Cart #
     cart = MyCart()
     cart.create_cart()
-    cart.add_to_cart(shoe, 1000)
+    cart.add_to_cart(shoe, 1001)
     cart.add_to_cart(shirt, 20)
     print(cart.cart)
 
@@ -242,3 +251,7 @@ if __name__ == "__main__":
     # Checkout #
     checkout = Checkout()
     checkout.checkout(cart, store, payment)  # Pass cart, store, and payment
+
+    # CalculateCart #
+    calc = CalculateCart()
+    print(calc.calc_cart(cart))
