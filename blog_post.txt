@@ -1,7 +1,9 @@
 Warum bekommen Software-Design-Patterns und Prinzipien wenig Beachtung in Youtube Tutorials?
 
 Die meisten Youtube-Tutorials im Bereich Python, richten sich an blutige Anfänger und erklären, überwiegend, Datenstrukturen, einfache Operationen und Funktionen.
-Eventuell wird auch noch über Klassen gesprochen. Dennoch findet man auf Youtube auch Tuturials die weitaus tiefer in die Materie reichen. 
+Eventuell wird auch noch über Klassen gesprochen. Dennoch findet man auf Youtube auch Tuturials die weitaus tiefer in die Materie reichen.
+
+Hier möchte ich zwei, zufällig gewählte, Beispiele anführen, welche, zusammen immerhin über 9 Millionen Aufrufe haben.
 
 Zum Beispiel der der *Harvard CS50's Introduction to Programming with Python - Full University Course* auf dem Kanal *freeCodeCamp.org*. In diesem Kurs, mit ein Dauer von knapp 16 Stunden,
 wird in Stunde 13 bei das Thema Klassenvererbung behandelt. Hier sieht man wie die Klasse *Student* mit einem if-statement initialisiert wird. Hier hätte man sich überlegen können,
