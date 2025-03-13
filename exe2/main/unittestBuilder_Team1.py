@@ -26,7 +26,7 @@ class TestBuilder(unittest.TestCase):
         self.assertFalse(self.macos.create_checkbox() == "This is a Windows checkbox")
         self.assertIsInstance(self.macos.create_checkbox(), str)
 
-    def test_abstract_factory_instantiation(self):
+    def test_ui_factory_instantiation(self):
         self.assertRaises(TypeError, exercise_builder.UIFactory)
 
     def tearDown(self):
@@ -34,4 +34,4 @@ class TestBuilder(unittest.TestCase):
         self.macos = None
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
