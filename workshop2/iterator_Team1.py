@@ -20,7 +20,7 @@ class App:
             if command not in ["n", "b", "c", "q"]:
                 command = input("(n)ext, (b)ack, (c)urrent, (q)uit: ").lower()
 
-            if command == "n":
+            elif command == "n":
                 self.next.traverse()
                 current = self.playlist.database[self.playlist.position]
                 print(f"Now playing: {current[0]} by {current[1]}")
@@ -36,12 +36,10 @@ class App:
             elif command == "q":
                 print("Goodbye!")
                 self.running = False
-                quit()
 
 class Data:
     def __init__(self):
         self.database = None
-        self.iterator = None
         self.position = 0
 
     def set_data(self, data):
