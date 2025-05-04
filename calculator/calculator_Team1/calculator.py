@@ -1,9 +1,17 @@
+from abc import ABC, abstractmethod
+
 class SimpleCalculator:
     def __init__(self):
         self.operators = Operators()
         self.input = InputPrompt()
-        self.result = Result()  # Already initialized to 0
+        self.result = Result()
         self.running = True
+        self.commands = {
+            "addition": AdditionCommand(),
+            "subtraction": SubtractionCommand(),
+            "multiplication": MultiplicationCommand(),
+            "division": DivisionCommand()
+        }
 
     def __str__(self):
         return str(self.result)
@@ -12,18 +20,14 @@ class SimpleCalculator:
         self.input.welcome()
         self.input.syntax()
         
-        # Use running flag instead of result value for loop control
         while self.running:
-            # Get user input
             user_input = self.get_input()
             
-            # Check for exit command
             if user_input.lower() in ["exit", "quit", "q"]:
                 self.input.exit()
                 self.running = False
                 continue
                 
-            # Process input
             try:
                 parts = user_input.split()
                 if len(parts) != 3:
@@ -34,20 +38,16 @@ class SimpleCalculator:
                 operator_symbol = parts[1].lower()
                 b = float(parts[2])
                 
-                # Find operation type
                 operation_type = self.find_operation(operator_symbol)
                 
                 if not operation_type or operation_type == "exit":
                     self.input.error()
                     continue
                 
-                # Perform calculation
                 self.perform_operation(operation_type, a, b)
                 
-                # Show result
                 print(f"{self.input.result_msg}{self.result}")
                 
-                # Ask to continue
                 continue_calc = input(f"{self.input.again_msg} ")
                 if continue_calc.lower() not in ["y", "yes"]:
                     self.input.exit()
@@ -59,9 +59,11 @@ class SimpleCalculator:
             except Exception as e:
                 print(f"Unexpected error: {e}")
                 self.input.error()
-    
+
+            
     def get_input(self):
         return input("Enter your calculation: ")
+
         
     def find_operation(self, symbol):
         for op_name, symbols in self.operators.operators.items():
@@ -70,18 +72,8 @@ class SimpleCalculator:
         return None
             
     def perform_operation(self, operation, a, b):
-        if operation == "addition":
-            calculator = Addition()
-            calculator.addition(a, b)
-        elif operation == "subtraction":
-            calculator = Subtraction()
-            calculator.subtraction(a, b)
-        elif operation == "multiplication":
-            calculator = Multiplication()
-            calculator.multiplication(a, b)
-        elif operation == "division":
-            calculator = Division()
-            calculator.division(a, b)
+        if operation in self.commands:
+            self.commands[operation].execute(a, b)
         else:
             raise ValueError(f"Unknown operation: {operation}")
 
@@ -99,7 +91,7 @@ class InputPrompt:
         self.operators_msg = ""
 
     def __str__(self):
-        return str(f"{self.version_msg}")
+        return self.version_msg
     
     def input_msg(self):
         self.input_msg = input("Enter your calculation: ")
@@ -132,7 +124,10 @@ class Operators:
         self.setup_standard_operators()
 
     def __str__(self):
-        return str(f"{self.operators}")
+        lines = []
+        for name, symbols in self.operators.items():
+            lines.append(f"{name}: {', '.join(symbols)}")
+            return "\n".join(lines) if lines else "{}"
     
     def setup_standard_operators(self):
         self.operators = {
@@ -156,7 +151,6 @@ class Operators:
             self.operators[name] = [symbol]
             print(f"Added new operation '{name}' with symbol '{symbol}'.")
 
-        return self.operators
 
     def rem_operator(self, name, symbol):
         name = name.lower()
@@ -170,23 +164,20 @@ class Operators:
                 print(f"Operator '{symbol}' not found for '{name}'.")
         else:
             print(f"Operation '{name}' not found.")
-
-        return self.operators
     
 class Result:
     _instance = None
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(Result, cls).__new__(cls)
-            cls._instance.result = 0
+            cls._instance.result = 0.0
         return cls._instance
 
     def __str__(self):
-        return str(f"{self.result}")
+        return str(self.result)
 
     def set_result(self, value):
         self.result = value
-        return self.result
     
 class Calculations:
     def __str__(self):
@@ -219,6 +210,30 @@ class Division(Calculations):
             result = a / b
             self.return_result(result)
 
+class CalculationCommand(ABC):
+    @abstractmethod
+    def execute(self, a, b):
+        pass
+
+class AdditionCommand(CalculationCommand):
+    def execute(self, a, b):
+        addition = Addition()
+        addition.addition(a, b)
+    
+class SubtractionCommand(CalculationCommand):
+    def execute(self, a, b):
+        subtraction = Subtraction()
+        subtraction.subtraction(a, b)
+    
+class MultiplicationCommand(CalculationCommand):
+    def execute(self, a, b):
+        multiplication = Multiplication()
+        multiplication.multiplication(a, b)
+    
+class DivisionCommand(CalculationCommand):
+    def execute(self, a, b):
+        division = Division()
+        division.division(a, b)
 
 if __name__ == '__main__':
     calc = SimpleCalculator()
